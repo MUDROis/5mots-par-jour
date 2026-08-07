@@ -29,7 +29,10 @@ function getDayData(w, d){
   if(!progress[k]) progress[k] = { stars: 0, tasks: {}, done: false };
   return progress[k];
 }
-function dayDone(w, d){ return getDayData(w, d).done; }
+function dayDone(w, d){
+  const k = dayKey(w, d);
+  return !!(progress[k] && progress[k].done);
+}
 function weekDone(w){ return [1,2,3,4,5].every(function(d){ return dayDone(w, d); }); }
 function awardTaskStar(w, d, t){
   const data = getDayData(w, d);
@@ -38,33 +41,14 @@ function awardTaskStar(w, d, t){
     data.stars = Object.keys(data.tasks).length;
     if(data.stars >= TASK_COUNT) data.done = true;
     saveProgress();
-    maybeExtendReveal();
   }
-}
-function getMeta(){
-  if(!progress._meta) progress._meta = { visibleWeek: null };
-  return progress._meta;
-}
-function seedVisibleWeek(){
-  const meta = getMeta();
-  if(meta.visibleWeek) return;
-  let furthest = 0;
-  for(const k in progress){
-    const m = /^(\d+)-(\d+)$/.exec(k);
-    if(m){
-      const data = progress[k];
-      if(data && (data.stars > 0 || data.done)){
-        const w = parseInt(m[1], 10);
-        if(w > furthest) furthest = w;
-      }
-    }
-  }
-  meta.visibleWeek = Math.min(TOTAL_WEEKS, Math.max(GROUP_SIZE, Math.ceil(furthest / GROUP_SIZE) * GROUP_SIZE));
-  saveProgress();
 }
 function visibleWeek(){
-  const meta = getMeta();
-  return meta.visibleWeek || GROUP_SIZE;
+  let v = GROUP_SIZE;
+  while(v < TOTAL_WEEKS && groupDay5Done(v)){
+    v = Math.min(TOTAL_WEEKS, v + GROUP_SIZE);
+  }
+  return v;
 }
 function maxOpenWeek(){
   if(typeof isAdminUser === 'function' && isAdminUser()) return TOTAL_WEEKS;
@@ -84,20 +68,6 @@ function groupDay5Done(end){
     if(!dayDone(w, 5)) return false;
   }
   return true;
-}
-function maybeExtendReveal(){
-  const meta = getMeta();
-  let v = visibleWeek();
-  let changed = false;
-  while(v < TOTAL_WEEKS && groupDay5Done(v)){
-    v = Math.min(TOTAL_WEEKS, v + GROUP_SIZE);
-    changed = true;
-  }
-  if(changed && meta.visibleWeek !== v){
-    meta.visibleWeek = v;
-    saveProgress();
-  }
-  return changed;
 }
 function searchWeek(){
   const input = document.getElementById('weekSearch');
@@ -618,7 +588,6 @@ window.onAuthChanged = function(){
   renderHome();
 };
 loadProgress();
-seedVisibleWeek();
 document.body.setAttribute('data-theme', themeGroup(currentWeek));
 const searchInput = document.getElementById('weekSearch');
 if(searchInput){
