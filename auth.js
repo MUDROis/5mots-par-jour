@@ -133,32 +133,15 @@ function loadCloudProgress() {
     if (typeof window.onAuthChanged === 'function') window.onAuthChanged();
   });
 }
-let authMode = 'login';
 function openAuthScreen() {
-  setAuthMode('login');
   document.getElementById('authMsg').textContent = '';
   showScreen('screen-auth');
 }
-function setAuthMode(mode) {
-  authMode = mode;
-  const isReg = mode === 'register';
-  document.getElementById('authTitle').textContent = isReg ? 'Регистрация' : 'Вход';
-  document.getElementById('authSubmitBtn').textContent = isReg ? 'Зарегистрироваться' : 'Войти';
-  document.getElementById('authToggleBtn').textContent = isReg ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться';
-  document.getElementById('authRegFields').style.display = isReg ? 'block' : 'none';
-  document.getElementById('authPasswordInput').autocomplete = isReg ? 'new-password' : 'current-password';
-}
-function toggleAuthMode() {
-  setAuthMode(authMode === 'login' ? 'register' : 'login');
-  document.getElementById('authMsg').textContent = '';
-}
 function authErrorText(code) {
   const map = {
-    'auth/email-already-in-use': 'Эта почта уже зарегистрирована. Войдите.',
-    'auth/invalid-email': 'Некорректный адрес электронной почты.',
-    'auth/weak-password': 'Пароль слишком короткий (минимум 6 символов).',
     'auth/wrong-password': 'Неверный пароль.',
-    'auth/user-not-found': 'Пользователь с такой почтой не найден.',
+    'auth/user-not-found': 'Пользователь с такой почтой не найден. Аккаунт создаёт преподаватель.',
+    'auth/invalid-email': 'Некорректный адрес электронной почты.',
     'auth/invalid-credential': 'Неверная почта или пароль.',
     'auth/too-many-requests': 'Слишком много попыток. Подождите и попробуйте снова.',
     'auth/network-request-failed': 'Нет соединения с интернетом.'
@@ -177,39 +160,13 @@ function submitAuth() {
   const submit = document.getElementById('authSubmitBtn');
   submit.disabled = true;
   submit.textContent = 'Подождите…';
-  const finish = function (err) {
-    submit.disabled = false;
-    submit.textContent = authMode === 'register' ? 'Зарегистрироваться' : 'Войти';
-    if (err) msgEl.textContent = authErrorText(err.code || '');
-  };
-  if (authMode === 'register') {
-    const pass2 = document.getElementById('authPasswordInput2').value;
-    if (pass.length < 6) {
-      finish({ code: 'auth/weak-password' });
-      return;
-    }
-    if (pass !== pass2) {
-      msgEl.textContent = 'Пароли не совпадают.';
+  firebaseAuth.signInWithEmailAndPassword(email, pass)
+    .then(function () { showHome(); })
+    .catch(function (err) {
       submit.disabled = false;
-      submit.textContent = 'Зарегистрироваться';
-      return;
-    }
-    firebaseAuth.createUserWithEmailAndPassword(email, pass)
-      .then(function (cred) {
-        return firebaseDb.collection('users').doc(cred.user.uid).set({
-          email: email.toLowerCase(),
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
-          progress: {}
-        });
-      })
-      .then(function () { showHome(); })
-      .catch(finish);
-  } else {
-    firebaseAuth.signInWithEmailAndPassword(email, pass)
-      .then(function () { showHome(); })
-      .catch(finish);
-  }
+      submit.textContent = 'Войти';
+      msgEl.textContent = authErrorText(err.code || '');
+    });
 }
 function logout() {
   firebaseAuth.signOut()

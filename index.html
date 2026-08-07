@@ -51,7 +51,7 @@
     <div class="week-grid" id="weekGrid"></div>
   </div>
 
-  <!-- АВТОРИЗАЦИЯ: вход / регистрация -->
+  <!-- АВТОРИЗАЦИЯ: вход -->
   <div class="screen" id="screen-auth">
     <div class="nav"><button class="btn btn-skip" onclick="showHome()">← На главную</button></div>
     <h1 id="authTitle">Вход</h1>
@@ -61,16 +61,11 @@
       <input type="email" id="authEmailInput" class="auth-input" placeholder="email@example.com" autocomplete="email">
       <label class="auth-label" for="authPasswordInput">Пароль</label>
       <input type="password" id="authPasswordInput" class="auth-input" placeholder="••••••" autocomplete="current-password">
-      <div id="authRegFields" style="display:none">
-        <label class="auth-label" for="authPasswordInput2">Повторите пароль</label>
-        <input type="password" id="authPasswordInput2" class="auth-input" placeholder="••••••" autocomplete="new-password">
-      </div>
       <div class="auth-msg" id="authMsg"></div>
       <div class="nav">
         <button class="btn btn-green" id="authSubmitBtn" onclick="submitAuth()">Войти</button>
-        <button class="btn btn-blue" id="authToggleBtn" onclick="toggleAuthMode()">Нет аккаунта? Зарегистрироваться</button>
       </div>
-      <p class="auth-note">Без входа доступна только неделя 1. Войди в аккаунт, чтобы открыть недели 2–4 и все следующие по мере прохождения.</p>
+      <p class="auth-note">Без входа доступна только неделя 1. Войди в аккаунт, чтобы открыть недели 2–4 и все следующие по мере прохождения. Аккаунт создаёт преподаватель — если у тебя ещё нет входа, попроси его зарегистрировать тебя.</p>
     </div>
   </div>
 
