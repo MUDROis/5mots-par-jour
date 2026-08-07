@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>5 mots par jour</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#B8D6FF">
+<meta name="description" content="Французский для детей: 5 новых слов в день, 52 недели. Карточки, прописи, диктант и сопоставление — учи слова с 5 mots par jour!">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="logo.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="5 mots par jour">
+<meta property="og:description" content="Французский для детей: 5 новых слов в день, 52 недели. Карточки, прописи, диктант и сопоставление — учи слова с 5 mots par jour!">
+<meta property="og:image" content="logo.png">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="5 mots par jour">
+<meta name="twitter:description" content="Французский для детей: 5 новых слов в день, 52 недели. Карточки, прописи, диктант и сопоставление — учи слова с 5 mots par jour!">
+<meta name="twitter:image" content="logo.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="2">
+<div class="save-indicator" id="saveIndicator">💾 Прогресс сохранён</div>
+<div class="container">
+
+  <!-- ШАПКА: заголовок + авторизация на одной строке -->
+  <header class="site-header">
+    <h1 class="site-title"><img src="logo.png" alt="5 mots par jour" class="home-logo">🇫🇷 5 mots par jour</h1>
+    <div class="auth-bar" id="authBar">
+      <div id="authBarGuest">
+        <button class="btn btn-blue btn-small" onclick="openAuthScreen()">🔑 Войти</button>
+      </div>
+      <div id="authBarUser" style="display:none">
+        <span class="auth-email" id="authEmail"></span>
+        <span class="auth-access" id="authAccess"></span>
+        <button class="btn btn-pink btn-small" onclick="logout()">Выйти</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ГЛАВНАЯ: 52 недели -->
+  <div class="screen active" id="screen-home">
+    <p class="subtitle">Тренажёр: 5 слов в день • 52 недели</p>
+    <p class="home-stats" id="homeStats"></p>
+    <div class="search-row">
+      <input type="number" id="weekSearch" min="1" max="52" placeholder="Поиск недели (1–52)…">
+      <button class="btn btn-blue" onclick="searchWeek()">🔍 Открыть</button>
+    </div>
+    <div id="searchHint" class="search-hint"></div>
+    <div id="homeRevealHint" class="reveal-hint"></div>
+    <div class="week-grid" id="weekGrid"></div>
+  </div>
+
+  <!-- АВТОРИЗАЦИЯ: вход / регистрация -->
+  <div class="screen" id="screen-auth">
+    <div class="nav"><button class="btn btn-skip" onclick="showHome()">← На главную</button></div>
+    <h1 id="authTitle">Вход</h1>
+    <p class="subtitle">Вход по электронной почте и паролю</p>
+    <div class="auth-form">
+      <label class="auth-label" for="authEmailInput">Электронная почта</label>
+      <input type="email" id="authEmailInput" class="auth-input" placeholder="email@example.com" autocomplete="email">
+      <label class="auth-label" for="authPasswordInput">Пароль</label>
+      <input type="password" id="authPasswordInput" class="auth-input" placeholder="••••••" autocomplete="current-password">
+      <div id="authRegFields" style="display:none">
+        <label class="auth-label" for="authPasswordInput2">Повторите пароль</label>
+        <input type="password" id="authPasswordInput2" class="auth-input" placeholder="••••••" autocomplete="new-password">
+      </div>
+      <div class="auth-msg" id="authMsg"></div>
+      <div class="nav">
+        <button class="btn btn-green" id="authSubmitBtn" onclick="submitAuth()">Войти</button>
+        <button class="btn btn-blue" id="authToggleBtn" onclick="toggleAuthMode()">Нет аккаунта? Зарегистрироваться</button>
+      </div>
+      <p class="auth-note">Без входа доступна только неделя 1. Войди в аккаунт, чтобы открыть недели 2–4 и все следующие по мере прохождения.</p>
+    </div>
+  </div>
+
+  <!-- НЕДЕЛЯ: 5 дней -->
+  <div class="screen" id="screen-week">
+    <div class="nav"><button class="btn btn-skip" onclick="showHome()">← Все недели</button></div>
+    <h1 id="weekTitle">Неделя 11</h1>
+    <p class="subtitle">Каждый день — 5 новых слов, день 5 — повторение всей недели</p>
+    <div class="week-trophy" id="weekTrophy"></div>
+    <div class="day-list" id="dayList"></div>
+  </div>
+
+  <!-- ИГРА -->
+  <div class="screen" id="screen-game">
+    <div style="text-align:center;margin-bottom:10px">
+      <div class="nav" style="margin-top:0"><button class="btn btn-skip" onclick="openWeek(currentWeek)">← К неделе</button></div>
+      <h1 id="gameTitle">Неделя 11 • День 1</h1>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div><div class="progress-text" id="progressText">0 / 4 заданий</div></div>
+      <div class="stars" id="starsDisplay">⭐ 0 / 4</div>
+    </div>
+
+    <!-- ЭТАП 0: Приветствие -->
+    <div class="gscreen active" id="gscreen0">
+      <div style="text-align:center">
+        <svg class="svg-icon float-anim" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="var(--orange)" opacity=".3"/>
+          <text x="50" y="65" font-size="50" text-anchor="middle">🎵</text>
+        </svg>
+        <h2 id="welcomeTitle">Привет! Сегодня учим слова</h2>
+        <div class="welcome-list" id="welcomeList"></div>
+        <button class="btn btn-green" onclick="goTo(1)">🚀 Начать игру!</button>
+        <div style="margin-top:15px;font-size:.9em;color:#666">💾 Прогресс сохраняется автоматически</div>
+      </div>
+    </div>
+
+    <!-- ЭТАП 1: Карточки -->
+    <div class="gscreen" id="gscreen1">
+      <h2>📇 Задание 1: Карточки</h2>
+      <p class="hint">Нажми на карточку чтобы перевернуть. 🔊 чтобы услышать</p>
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+          <div class="flashcard-face flashcard-front">
+            <div class="flashcard-emoji" id="fcEmoji">🎤</div>
+            <div class="flashcard-word" id="fcWord">chanter</div>
+            <button class="speaker-btn" onclick="event.stopPropagation();speak(currentFcWord)">🔊</button>
+            <div class="flashcard-hint">👆 Нажми чтобы перевернуть</div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <div class="flashcard-emoji" id="fcEmojiBack">🎤</div>
+            <div class="flashcard-word" id="fcWordBack">петь</div>
+            <div class="flashcard-hint">Нажми чтобы перевернуть</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin:15px 0">
+        <button class="btn btn-blue" onclick="prevCard()">← Назад</button>
+        <span id="cardCounter" style="margin:0 15px;font-size:1.2em">1 / 5</span>
+        <button class="btn btn-blue" onclick="nextCard()">Вперёд →</button>
+      </div>
+      <div class="nav">
+        <button class="btn btn-green" onclick="markLearned()">✅ Я выучил это слово</button>
+        <button class="btn btn-skip" onclick="goTo(2)">Пропустить →</button>
+      </div>
+      <div class="nav">
+        <button class="btn btn-purple" id="flashcardsDone" style="display:none" onclick="goTo(2)">Дальше — прописи →</button>
+      </div>
+    </div>
+
+    <!-- ЭТАП 2: Прописи -->
+    <div class="gscreen" id="gscreen2">
+      <h2>✍️ Задание 2: Прописи</h2>
+      <p class="hint">Обведи буквы пальцем или мышкой. Нажми 🔊 чтобы услышать слово</p>
+      <div class="trace-wrapper">
+        <div style="text-align:center">
+          <button class="speaker-btn" onclick="speak(traceWord)">🔊</button>
+          <div class="trace-word-display" id="traceWordDisplay">chanter</div>
+          <div id="traceRuDisplay" style="text-align:center;margin-top:5px;color:#666"></div>
+          <div class="task-counter" id="traceCounter"></div>
+        </div>
+      </div>
+      <canvas id="traceCanvas" width="800" height="250"></canvas>
+      <div class="canvas-controls">
+        <button class="btn btn-pink" onclick="clearCanvas()">🧹 Очистить</button>
+        <button class="btn btn-green" onclick="checkTrace()">✅ Готово!</button>
+      </div>
+      <div class="feedback" id="traceFeedback"></div>
+      <div class="nav">
+        <button class="btn btn-blue" id="traceNext" style="display:none" onclick="nextTrace()">Дальше →</button>
+        <button class="btn btn-skip" onclick="goTo(3)">Пропустить →</button>
+      </div>
+    </div>
+
+    <!-- ЭТАП 3: Диктант -->
+    <div class="gscreen" id="gscreen3">
+      <h2>🎧 Задание 3: Диктант</h2>
+      <p class="hint">Послушай слово и напиши его по-французски</p>
+      <div style="text-align:center;margin:20px 0">
+        <button class="speaker-btn" style="width:80px;height:80px;font-size:2.5em" onclick="playDictation()">🔊</button>
+        <div style="margin-top:15px;color:#666">Нажми на динамик чтобы услышать слово</div>
+        <div class="task-counter" id="dictationCounter"></div>
+      </div>
+      <div style="text-align:center">
+        <input type="text" class="dictation-input" id="dictationInput" placeholder="Впиши слово..." autocomplete="off">
+      </div>
+      <div class="nav">
+        <button class="btn btn-green" onclick="checkDictation()">Проверить</button>
+        <button class="btn btn-blue" onclick="speak(currentDictationWord)">Повторить 🔊</button>
+      </div>
+      <div class="feedback" id="dictationFeedback"></div>
+      <div class="nav">
+        <button class="btn btn-blue" id="dictationNext" style="display:none" onclick="nextDictation()">Следующее слово →</button>
+        <button class="btn btn-skip" onclick="goTo(4)">Пропустить →</button>
+      </div>
+    </div>
+
+    <!-- ЭТАП 4: Сопоставление -->
+    <div class="gscreen" id="gscreen4">
+      <h2>🎯 Задание 4: Сопоставь пары</h2>
+      <p class="hint">Нажми на французское слово, потом на его перевод</p>
+      <div class="match-grid" id="matchGrid"></div>
+      <div class="feedback" id="matchFeedback"></div>
+      <div class="nav">
+        <button class="btn btn-blue" id="matchNext" style="display:none" onclick="goTo(5)">К финалу! 🎉</button>
+        <button class="btn btn-skip" onclick="goTo(5)">Пропустить →</button>
+      </div>
+    </div>
+
+    <!-- ЭТАП 5: Финал -->
+    <div class="gscreen" id="gscreen5">
+      <div style="text-align:center">
+        <div class="badge" id="finalBadge">🏆</div>
+        <h2 id="finalTitle">Bravo! День пройден! 🎉</h2>
+        <p class="stars" id="finalStars"></p>
+        <div id="finalWeekCup" style="font-size:1.2em;margin:5px 0"></div>
+        <div id="finalDays" style="margin:10px 0;padding:12px;background:#E8F5E9;border-radius:10px"></div>
+        <p style="font-size:1.1em;margin:10px 0">Слова этого дня:</p>
+        <div class="welcome-list" id="finalList"></div>
+        <div class="nav">
+          <button class="btn btn-blue" id="nextDayBtn" onclick="nextDay()">Следующий день →</button>
+          <button class="btn btn-purple" onclick="startDay(currentWeek,currentDay)">🔁 Повторить день</button>
+          <button class="btn btn-pink" onclick="openWeek(currentWeek)">📚 К неделе</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>© 2019-2026 ИП Громова Анна Александровна, ОГРНИП: 319237500156762, ИНН: 236507001744</p>
+  <p>Лицензия № Л035-01218-23/01091451 Интерактивная школа «МУДРО»</p>
+  <p>Любое копирование запрещено. Код защищен лицензией.</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="words.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
