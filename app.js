@@ -82,11 +82,15 @@ function searchWeek(){
     }, 2000);
     return;
   }
-  if(val > maxOpenWeek()){
-    showLockedWeek(val);
-    return;
+  const user = (typeof currentUser === 'function') ? currentUser() : null;
+  const denied = !!user && (typeof currentAccess === 'function') && currentAccess() === 'denied';
+  if(!user || denied){
+    if(val > maxOpenWeek()){
+      showLockedWeek(val);
+      return;
+    }
   }
-  openWeek(val);
+  openWeek(val, true);
 }
 function shuffle(arr){ return arr.map(function(v){ return [Math.random(), v]; }).sort(function(a,b){ return a[0]-b[0]; }).map(function(v){ return v[1]; }); }
 function toWord(a){ return { fr: a[0], ru: a[1], emoji: a[2] || '⭐' }; }
@@ -113,8 +117,8 @@ function showHome(){
   renderHome();
   showScreen('screen-home');
 }
-function openWeek(w){
-  if(!canAccessWeek(w)){
+function openWeek(w, force){
+  if(!force && !canAccessWeek(w)){
     showLockedWeek(w);
     return;
   }
