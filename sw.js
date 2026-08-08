@@ -3,7 +3,7 @@
    Кэширует оболочку приложения для работы офлайн и быстрого
    запуска. Данные и вход остаются в Firebase (нужна сеть).
    ============================================================ */
-const CACHE = '5mots-par-jour-v1';
+const CACHE = '5mots-par-jour-v2';
 const SHELL = [
   './',
   './index.html',
@@ -14,10 +14,10 @@ const SHELL = [
   './firebase-config.js',
   './logo.png',
   './favicon.ico',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-maskable-512.png',
-  './apple-touch-icon.png',
+  './icon-192.png?v=2',
+  './icon-512.png?v=2',
+  './icon-maskable-512.png?v=2',
+  './apple-touch-icon.png?v=2',
   './manifest.webmanifest'
 ];
 
