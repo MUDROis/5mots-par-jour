@@ -1,0 +1,32 @@
+{
+  "name": "5 mots par jour — тренажёр французских слов",
+  "short_name": "5 mots",
+  "description": "Французский для детей: 5 новых слов в день, 52 недели. Карточки, прописи, диктант и сопоставление — учи слова с 5 mots par jour!",
+  "lang": "ru",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#B8D6FF",
+  "theme_color": "#B8D6FF",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

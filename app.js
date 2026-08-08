@@ -173,10 +173,13 @@ function renderHome(){
     card.setAttribute('data-theme', themeGroup(w));
     let dots = '';
     for(let d = 1; d <= 5; d++) dots += '<span class="dot' + (getDayData(w, d).done ? ' done' : '') + '"></span>';
+    const wkData = WEEKS[w - 1];
+    const themes = (wkData && wkData.theme) ? wkData.theme : [];
     card.innerHTML =
       '<div class="week-num">Неделя ' + w + '</div>' +
       '<div class="week-dots">' + dots + '</div>' +
-      '<div class="week-badge">' + (open ? (doneInWeek === 5 ? '🏆' : '⭐ ' + starsInWeek) : '🔒') + '</div>';
+      '<div class="week-badge">' + (open ? (doneInWeek === 5 ? '🏆' : '⭐ ' + starsInWeek) : '🔒') + '</div>' +
+      (themes.length ? '<div class="week-topics">' + themes.map(function(t){ return '<span>' + t + '</span>'; }).join('') + '</div>' : '');
     card.onclick = (function(ww){ return function(){ if(!denied && ww <= openMax) openWeek(ww); else showLockedWeek(ww); }; })(w);
     grid.appendChild(card);
   }
@@ -600,6 +603,11 @@ if(searchInput){
       e.preventDefault();
       searchWeek();
     }
+  });
+}
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(function(err){
+    console.warn('Service Worker не зарегистрирован:', err);
   });
 }
 showHome();
